@@ -1,0 +1,8 @@
+.image.is-200x200 {
+    height: 200px;
+    width: 200px;
+}
+
+.box.selected {
+    border-style: solid;
+}
