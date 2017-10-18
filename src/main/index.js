@@ -1,6 +1,4 @@
-import {app, BrowserWindow, protocol} from 'electron'
-
-import {oauth1RegisterScheme, oauth1RegisterProtocol} from './src/renderer/ElectronOauth1';
+import {app, BrowserWindow, protocol, ipcMain} from 'electron'
 
 /**
  * Set `__static` path to static files in production
@@ -11,7 +9,7 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow
-oauth1RegisterScheme(protocol);
+protocol.registerStandardSchemes(['electron.oauth1']);
 const winURL = process.env.NODE_ENV === 'development'
     ? `http://localhost:9080`
     : `file://${__dirname}/index.html`
@@ -35,7 +33,11 @@ function createWindow() {
         mainWindow = null
     })
 
-    oauth1RegisterProtocol(protocol);
+    mainWindow.webContents.on('did-finish-load', () => {
+        protocol.registerStringProtocol('electron.oauth1', (req, callback) => {
+            mainWindow.webContents.send('oauth1_callback', req);
+        });
+    })
 }
 
 app.on('ready', createWindow)
