@@ -25,8 +25,11 @@
         methods:  {
             login() {
                 const auth = Auth();
-                auth.run().then(result => {
-                    console.log(result);
+                auth.run().then(token => {
+                    this.$store.dispatch('setTrelloAuth', {
+                        token: token
+                    });
+                    console.log(token);
                 }).catch(error => {
                     console.log(error);
                 });

@@ -1,6 +1,8 @@
 export default function () {
     const that = {};
 
+    const COOKIE_NAME = 'trello_token';
+
     that.run = () => {
         return new Promise((resolve, reject) => {
             const {oauth1Authenticate} = require('@/ElectronOauth1');
@@ -12,9 +14,25 @@ export default function () {
                 AUTHORIZE_TOKEN_URL: 'https://trello.com/1/OAuthAuthorizeToken',
                 REQUEST_TOKEN_URL:   'https://trello.com/1/OAuthGetRequestToken',
             }, BrowserWindow).then((token) => {
-                console.log(token);
+                save(token.oauth_token);
+                resolve(token.oauth_token);
             });
         });
+    };
+
+    that.isAuth = () => {
+        return !!that.token();
+    };
+
+    that.token = () => {
+        const Cookies = require('js-cookie');
+        return Cookies.get(COOKIE_NAME);
+    };
+
+    const save = (token) => {
+        const Cookies         = require('js-cookie');
+        const expires_in_days = 86400 / 60 / 60 / 24;
+        Cookies.set(COOKIE_NAME, token, {expires: parseInt(expires_in_days)});
     };
 
     return that;

@@ -1,7 +1,10 @@
 import VkAuth from '@/models/Vk/Auth'
+import TrelloAuth from '@/models/Trello/Auth'
 import _ from 'lodash';
 
 const vk_auth = VkAuth();
+
+const trello_auth = TrelloAuth();
 
 let groups = localStorage.getItem('groups');
 if (groups) {
@@ -10,8 +13,9 @@ if (groups) {
 
 const state = {
     is_vk_auth:      vk_auth.isAuth(),
-    is_trello_auth:  false,
+    is_trello_auth:  trello_auth.isAuth(),
     vk_token:        vk_auth.token(),
+    trello_token:    trello_auth.token(),
     groups_selected: groups ? groups : []
 };
 console.log(state);
@@ -22,6 +26,12 @@ const mutations = {
     },
     setVkToken(state, token) {
         state.vk_token = token;
+    },
+    setTrelloAuth(state, value) {
+        state.is_trello_auth = value;
+    },
+    setTrelloToken(state, token) {
+        state.trello_token = token;
     },
     addGroup(state, group) {
         let groups = state.groups_selected;
@@ -46,6 +56,10 @@ const actions = {
     setVkAuth({commit}, {token}) {
         commit('setVkAuth', true);
         commit('setVkToken', token);
+    },
+    setTrelloAuth({commit}, {token}) {
+        commit('setTrelloAuth', true);
+        commit('setTrelloToken', token);
     },
     addGroup({commit}, {group}) {
         commit('addGroup', group);

@@ -6,8 +6,7 @@ export default function (token) {
 
     that.request = () => {
         return new Promise((resolve, reject) => {
-            const method = 'groups.get';
-            const url    = `https://api.vk.com/method/${method}?access_token=${token}&extended=1`;
+            const url = `https://api.trello.com/1/members/me/boards/?key=124d5a3c38400a7f6be20a26e203ae54&token=${token}`;
 
             axios.get(url).then((responce) => {
                 console.log(responce);
@@ -19,15 +18,13 @@ export default function (token) {
     };
 
     const format = (responce) => {
-        return _.map(_.filter(responce.data.response, (group_raw) => {
-            return _.isObject(group_raw);
-        }), (group_raw) => {
+        return _.map(_.map(responce.data, (raw_board) => {
             return {
-                gid:   group_raw.gid,
-                name:  group_raw.name,
-                image: group_raw.photo_big,
+                id:   raw_board.id,
+                name: raw_board.name,
+                url:  raw_board.shortUrl
             };
-        });
+        }));
     };
 
     return that;
